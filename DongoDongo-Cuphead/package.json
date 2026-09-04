@@ -1,0 +1,62 @@
+{
+  "name": "dongodongo-cuphead",
+  "version": "1.0.0",
+  "description": "Dongo Dongo Copilot Tutor - Cuphead-style Educational App",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "concurrently \"npm run watch:renderer\" \"wait-on dist/index.html && electron .\"",
+    "build": "npm run build:renderer && electron-builder",
+    "build:renderer": "webpack --mode production",
+    "watch:renderer": "webpack --mode development --watch",
+    "pack": "electron-builder --dir"
+  },
+  "keywords": [
+    "education",
+    "tutor",
+    "cuphead",
+    "zambia"
+  ],
+  "author": "Dongo Dongo Team",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^44.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "autoprefixer": "^10.5.5",
+    "concurrently": "^9.2.4",
+    "css-loader": "^7.1.5",
+    "electron-builder": "^26.15.3",
+    "html-webpack-plugin": "^5.6.8",
+    "postcss": "^8.5.28",
+    "postcss-loader": "^8.2.1",
+    "sass": "^1.104.0",
+    "sass-loader": "^16.0.8",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^4.3.3",
+    "ts-loader": "^9.6.2",
+    "typescript": "^5.7.2",
+    "wait-on": "^9.1.0",
+    "webpack": "^5.110.3",
+    "webpack-cli": "^7.2.3"
+  },
+  "build": {
+    "appId": "com.dongodongo.copilot",
+    "productName": "Dongo Dongo Copilot",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "src/main/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/assets/icon.ico"
+    }
+  }
+}
