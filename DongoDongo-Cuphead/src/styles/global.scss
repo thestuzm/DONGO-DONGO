@@ -1,0 +1,172 @@
+// Cuphead 1930s Color Palette - Watercolor & Ink
+$ink-black: #1a1a1a;
+$paper-white: #f4e4c1;
+$burgundy-red: #8b1538;
+$mustard-yellow: #d4a017;
+$sepia-light: #e8d5b5;
+$sepia-dark: #c4a882;
+$flesh-tone: #ffdbac;
+$film-grain-overlay: rgba(20, 20, 20, 0.08);
+
+// Typography - Vintage Cartoon Style
+$font-main: 'Courier New', monospace;
+$font-display: 'Georgia', serif;
+
+// Animation Curves - Rubber Hose Easing
+$rubber-ease: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+$bounce-ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+$ink-flow: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+// Paper Texture Noise
+@mixin paper-texture($opacity: 0.08) {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: $opacity;
+    pointer-events: none;
+    z-index: 1000;
+  }
+}
+
+// Hand-Drawn Ink Border Effect
+@mixin ink-border($width: 3px, $color: $ink-black, $wobble: true) {
+  border: $width solid $color;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  
+  @if $wobble {
+    animation: inkWobble 3s ease-in-out infinite;
+  }
+  
+  box-shadow: 
+    0 0 0 $width $color,
+    4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+@keyframes inkWobble {
+  0%, 100% {
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  }
+  25% {
+    border-radius: 225px 25px 255px 5px / 25px 255px 5px 225px;
+  }
+  50% {
+    border-radius: 245px 5px 235px 25px / 5px 235px 25px 245px;
+  }
+  75% {
+    border-radius: 235px 15px 245px 15px / 15px 245px 15px 235px;
+  }
+}
+
+// Watercolor Fill Effect
+@mixin watercolor-fill($base-color: $paper-white) {
+  background: radial-gradient(
+    ellipse at center,
+    lighten($base-color, 10%) 0%,
+    $base-color 60%,
+    darken($base-color, 8%) 100%
+  );
+  background-blend-mode: multiply;
+}
+
+// Film Grain Overlay (Global)
+@mixin film-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+  animation: grainShift 0.5s steps(4) infinite;
+}
+
+@keyframes grainShift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-5%, -5%); }
+  50% { transform: translate(5%, 5%); }
+  75% { transform: translate(-5%, 5%); }
+}
+
+// Squash and Stretch Animation Helper
+@mixin squash-stretch($duration: 0.3s) {
+  transition: transform $duration $rubber-ease;
+  
+  &:hover {
+    transform: scale(1.05, 0.95);
+  }
+  
+  &:active {
+    transform: scale(0.95, 1.05);
+  }
+}
+
+// Ink Bleed Shadow
+@mixin ink-bleed-shadow($color: rgba(26, 26, 26, 0.3)) {
+  box-shadow: 
+    0 0 20px $color,
+    0 0 40px rgba($color, 0.2),
+    inset 0 0 60px rgba($color, 0.1);
+}
+
+// Global Styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-main;
+  background-color: $paper-white;
+  color: $ink-black;
+  overflow: hidden;
+  @include paper-texture(0.08);
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+// Utility Classes
+.cuphead-btn {
+  @include ink-border(3px, $ink-black, true);
+  @include watercolor-fill($mustard-yellow);
+  @include squash-stretch(0.2s);
+  padding: 12px 24px;
+  font-family: $font-display;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s $rubber-ease;
+  
+  &:hover {
+    background: radial-gradient(
+      ellipse at center,
+      lighten($mustard-yellow, 15%) 0%,
+      $mustard-yellow 60%,
+      darken($mustard-yellow, 5%) 100%
+    );
+  }
+}
+
+.cuphead-card {
+  @include ink-border(3px, $ink-black, true);
+  @include watercolor-fill($paper-white);
+  @include ink-bleed-shadow();
+  padding: 20px;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+.film-grain-overlay {
+  @include film-grain;
+}

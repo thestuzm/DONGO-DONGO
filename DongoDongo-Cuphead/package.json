@@ -1,0 +1,49 @@
+{
+  "name": "dongodongo-cuphead",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A 1930s cartoon-styled educational copilot application inspired by Cuphead's aesthetic, built for Zambian Grade 12 students",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "deploy": "npm run build && npx netlify deploy --prod --dir=dist"
+  },
+  "keywords": [
+    "education",
+    "zambia",
+    "copilot",
+    "tutor",
+    "cuphead",
+    "1930s",
+    "cartoon",
+    "react",
+    "typescript"
+  ],
+  "author": "Dongo Dongo Team",
+  "license": "MIT",
+  "dependencies": {
+    "@react-three/drei": "^9.120.4",
+    "@react-three/fiber": "^8.17.10",
+    "framer-motion": "^11.15.0",
+    "hls.js": "^1.5.18",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.172.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@types/three": "^0.172.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "sass": "^1.83.4",
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
