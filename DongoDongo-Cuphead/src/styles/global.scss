@@ -1,82 +1,60 @@
-// Cuphead 1930s Color Palette - Watercolor & Ink
-$ink-black: #1a1a1a;
-$paper-white: #f4e4c1;
-$burgundy-red: #8b1538;
-$mustard-yellow: #d4a017;
-$sepia-light: #e8d5b5;
-$sepia-dark: #c4a882;
-$flesh-tone: #ffdbac;
-$film-grain-overlay: rgba(20, 20, 20, 0.08);
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-// Typography - Vintage Cartoon Style
-$font-main: 'Courier New', monospace;
-$font-display: 'Georgia', serif;
+// Cuphead-Style Design System - Disney-Quality Vector Aesthetics
+// High-resolution textures, smooth vector edges, organic animations
 
-// Animation Curves - Rubber Hose Easing
-$rubber-ease: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-$bounce-ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-$ink-flow: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-// Paper Texture Noise
-@mixin paper-texture($opacity: 0.08) {
-  position: relative;
+:root {
+  // Vintage Color Palette - Cuphead/Disney 1930s inspired
+  --color-ink-black: #1a1a1a;
+  --color-paper-white: #f5f1e8;
+  --color-burgundy-red: #8b1538;
+  --color-mustard-yellow: #d4a017;
+  --color-cream: #faf6ed;
+  --color-sepia: #e8dcc5;
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E");
-    opacity: $opacity;
-    pointer-events: none;
-    z-index: 1000;
-  }
-}
-
-// Hand-Drawn Ink Border Effect
-@mixin ink-border($width: 3px, $color: $ink-black, $wobble: true) {
-  border: $width solid $color;
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  // Tier-specific colors
+  --tier1-primary: #FFD93D;
+  --tier1-secondary: #FF6B6B;
+  --tier1-accent: #4ECDC4;
   
-  @if $wobble {
-    animation: inkWobble 3s ease-in-out infinite;
-  }
+  --tier2-primary: #6C5CE7;
+  --tier2-secondary: #A29BFE;
+  --tier2-accent: #00CEC9;
   
-  box-shadow: 
-    0 0 0 $width $color,
-    4px 4px 0 rgba(0, 0, 0, 0.2);
+  --tier3-primary: #2D3436;
+  --tier3-secondary: #636E72;
+  --tier3-accent: #FDCB6E;
+  
+  // Animation curves - Rubber hose style
+  --ease-rubber-hose: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-bounce: cubic-bezier(0.68, 0.26, 0.68, 0.96);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // Vector-style borders (smooth, not rasterized)
+  --border-ink-width: 3px;
+  --border-ink-color: var(--color-ink-black);
+  --border-radius-organic: 255px 15px 225px 15px / 15px 225px 15px 255px;
 }
 
-@keyframes inkWobble {
-  0%, 100% {
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  }
-  25% {
-    border-radius: 225px 25px 255px 5px / 25px 255px 5px 225px;
-  }
-  50% {
-    border-radius: 245px 5px 235px 25px / 5px 235px 25px 245px;
-  }
-  75% {
-    border-radius: 235px 15px 245px 15px / 15px 245px 15px 235px;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-// Watercolor Fill Effect
-@mixin watercolor-fill($base-color: $paper-white) {
-  background: radial-gradient(
-    ellipse at center,
-    lighten($base-color, 10%) 0%,
-    $base-color 60%,
-    darken($base-color, 8%) 100%
-  );
-  background-blend-mode: multiply;
+body {
+  font-family: 'Comic Neue', 'Segoe UI', sans-serif;
+  background-color: var(--color-paper-white);
+  color: var(--color-ink-black);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-// Film Grain Overlay (Global)
-@mixin film-grain {
+// Film grain overlay - 600 DPI texture effect
+.film-grain {
   position: fixed;
   top: 0;
   left: 0;
@@ -84,89 +62,266 @@ $ink-flow: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   height: 100%;
   pointer-events: none;
   z-index: 9999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
-  animation: grainShift 0.5s steps(4) infinite;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.5s steps(10) infinite;
 }
 
-@keyframes grainShift {
+@keyframes grain-shift {
   0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(-5%, -5%); }
-  50% { transform: translate(5%, 5%); }
-  75% { transform: translate(-5%, 5%); }
+  20% { transform: translate(-5%, -5%); }
+  40% { transform: translate(5%, 5%); }
+  60% { transform: translate(-5%, 5%); }
+  80% { transform: translate(5%, -5%); }
 }
 
-// Squash and Stretch Animation Helper
-@mixin squash-stretch($duration: 0.3s) {
-  transition: transform $duration $rubber-ease;
+// Paper texture background
+.paper-texture {
+  position: relative;
+  background-color: var(--color-paper-white);
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.03) 100%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)' opacity='0.08'/%3E%3C/svg%3E");
+}
+
+// Vector-style ink border - smooth, organic edges
+.ink-border {
+  border: var(--border-ink-width) solid var(--border-ink-color);
+  border-radius: var(--border-radius-organic);
+  position: relative;
+  background-clip: padding-box;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: var(--border-radius-organic);
+    background: linear-gradient(135deg, 
+      var(--border-ink-color) 0%, 
+      lighten(var(--border-ink-color), 10%) 50%, 
+      var(--border-ink-color) 100%);
+    z-index: -1;
+    opacity: 0.15;
+  }
+}
+
+// Watercolor fill effect
+.watercolor-fill {
+  background: radial-gradient(
+    ellipse at 30% 30%,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 70%
+  );
+}
+
+// Ink bleed shadow
+.ink-shadow {
+  box-shadow: 
+    4px 4px 0px rgba(26, 26, 26, 0.15),
+    8px 8px 0px rgba(26, 26, 26, 0.1),
+    12px 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+// Rubber hose animation mixin
+@mixin rubber-hose($duration: 0.6s) {
+  transition: all $duration var(--ease-rubber-hose);
+}
+
+// Button styles with squash & stretch
+.btn-cuphead {
+  @include rubber-hose(0.4s);
+  padding: 12px 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: var(--border-ink-width) solid var(--border-ink-color);
+  border-radius: var(--border-radius-organic);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
   
   &:hover {
-    transform: scale(1.05, 0.95);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 
+      6px 6px 0px rgba(26, 26, 26, 0.2),
+      12px 12px 20px rgba(0, 0, 0, 0.15);
   }
   
   &:active {
-    transform: scale(0.95, 1.05);
+    transform: scale(0.95) translateY(2px);
+    box-shadow: 
+      2px 2px 0px rgba(26, 26, 26, 0.2),
+      4px 4px 10px rgba(0, 0, 0, 0.15);
   }
 }
 
-// Ink Bleed Shadow
-@mixin ink-bleed-shadow($color: rgba(26, 26, 26, 0.3)) {
-  box-shadow: 
-    0 0 20px $color,
-    0 0 40px rgba($color, 0.2),
-    inset 0 0 60px rgba($color, 0.1);
+// Mascot container with breathing animation
+.mascot-container {
+  animation: breathe 3s ease-in-out infinite;
 }
 
-// Global Styles
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
 }
 
-body {
-  font-family: $font-main;
-  background-color: $paper-white;
-  color: $ink-black;
-  overflow: hidden;
-  @include paper-texture(0.08);
+// Eye blink animation
+.eye-blink {
+  animation: blink 4s ease-in-out infinite;
+  transform-origin: center;
 }
 
-#root {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
+@keyframes blink {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
 }
 
-// Utility Classes
-.cuphead-btn {
-  @include ink-border(3px, $ink-black, true);
-  @include watercolor-fill($mustard-yellow);
-  @include squash-stretch(0.2s);
-  padding: 12px 24px;
-  font-family: $font-display;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s $rubber-ease;
+// Mouth talk animation
+.mouth-talk {
+  animation: talk 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes talk {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(1.3); }
+}
+
+// Loading spinner with ink swirl
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--color-sepia);
+  border-top-color: var(--color-burgundy-red);
+  border-radius: 50%;
+  animation: ink-swirl 1.2s var(--ease-rubber-hose) infinite;
+}
+
+@keyframes ink-swirl {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+// Card hover effect with lift
+.card-lift {
+  @include rubber-hose(0.3s);
   
   &:hover {
-    background: radial-gradient(
-      ellipse at center,
-      lighten($mustard-yellow, 15%) 0%,
-      $mustard-yellow 60%,
-      darken($mustard-yellow, 5%) 100%
-    );
+    transform: translateY(-8px) rotate(1deg);
+    box-shadow: 
+      8px 8px 0px rgba(26, 26, 26, 0.15),
+      16px 16px 30px rgba(0, 0, 0, 0.2);
   }
 }
 
-.cuphead-card {
-  @include ink-border(3px, $ink-black, true);
-  @include watercolor-fill($paper-white);
-  @include ink-bleed-shadow();
-  padding: 20px;
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+// Netflix-style carousel
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 20px 0;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.film-grain-overlay {
-  @include film-grain;
+.carousel-item {
+  flex: 0 0 280px;
+  scroll-snap-align: start;
+}
+
+// Tab navigation with ink underline
+.tab-nav {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-sepia);
+    border-radius: 2px;
+  }
+}
+
+.tab-active {
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 4px;
+    background: var(--color-burgundy-red);
+    border-radius: 2px;
+    animation: tab-grow 0.3s var(--ease-rubber-hose);
+  }
+}
+
+@keyframes tab-grow {
+  from { width: 0%; }
+  to { width: 60%; }
+}
+
+// Voice input pulse animation
+.voice-pulse {
+  animation: voice-pulse-animation 2s ease-in-out infinite;
+}
+
+@keyframes voice-pulse-animation {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 0 15px rgba(255, 107, 107, 0);
+    transform: scale(1.05);
+  }
+}
+
+// Utility classes for tier theming
+.tier-1 {
+  --theme-primary: var(--tier1-primary);
+  --theme-secondary: var(--tier1-secondary);
+  --theme-accent: var(--tier1-accent);
+}
+
+.tier-2 {
+  --theme-primary: var(--tier2-primary);
+  --theme-secondary: var(--tier2-secondary);
+  --theme-accent: var(--tier2-accent);
+}
+
+.tier-3 {
+  --theme-primary: var(--tier3-primary);
+  --theme-secondary: var(--tier3-secondary);
+  --theme-accent: var(--tier3-accent);
+}
+
+// Smooth scrolling
+html {
+  scroll-behavior: smooth;
+}
+
+// Selection color
+::selection {
+  background: var(--color-mustard-yellow);
+  color: var(--color-ink-black);
+}
+
+// Focus visible for accessibility
+:focus-visible {
+  outline: 3px solid var(--color-burgundy-red);
+  outline-offset: 2px;
 }

@@ -1,333 +1,272 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useAppStore, TIER_INFO } from '../store/appStore';
+import { MascotOverlay } from './MascotOverlay';
+import * as Icons from 'lucide-react';
 
-interface ChatMessage {
-  id: number;
+interface Message {
+  id: string;
+  sender: 'user' | 'assistant';
   text: string;
-  sender: 'user' | 'ai';
   timestamp: Date;
 }
 
-interface ChatInterfaceProps {
-  onMascotStateChange: (state: 'idle' | 'thinking' | 'excited' | 'explaining') => void;
-  onBack: () => void;
-}
-
-export default function ChatInterface({ onMascotStateChange, onBack }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
+export const ChatInterface: React.FC = () => {
+  const { currentTier } = useAppStore();
+  const tierInfo = currentTier ? TIER_INFO[currentTier] : null;
+  const [messages, setMessages] = useState<Message[]>([
     {
-      id: 1,
-      text: "Howdy there, kid! Ready to learn some algebra? I'm here to help you crack those equations!",
-      sender: 'ai',
+      id: '1',
+      sender: 'assistant',
+      text: `Hi! I'm ${tierInfo?.mascotName || 'your tutor'}. How can I help you learn today?`,
       timestamp: new Date()
     }
   ]);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [inputText, setInputText] = useState('');
+  const [isRecording, setIsRecording] = useState(false);
+  const [mascotEmotion, setMascotEmotion] = useState<'neutral' | 'happy' | 'thinking' | 'excited' | 'talking'>('neutral');
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const tools = tierInfo?.tools || ['text'];
+  const showVoiceFirst = tierInfo?.showVoiceFirst || false;
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  const handleSendMessage = () => {
+    if (!inputText.trim()) return;
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
-
-    // Add user message
-    const userMessage: ChatMessage = {
-      id: messages.length + 1,
-      text: inputValue,
+    const newUserMessage: Message = {
+      id: Date.now().toString(),
       sender: 'user',
+      text: inputText,
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
-    setIsTyping(true);
-    onMascotStateChange('thinking');
+    setMessages(prev => [...prev, newUserMessage]);
+    setInputText('');
+    setMascotEmotion('thinking');
 
     // Simulate AI response
     setTimeout(() => {
-      const responses = [
-        "Great question! Let me break it down for ya...",
-        "You're on the right track, partner! Here's the trick...",
-        "Hot dog! That's a brainy one! Let's solve it together!",
-        "I've seen this before! Remember, X marks the spot!",
-        "Keep that noggin working! You're getting warmer!"
-      ];
-
-      const aiMessage: ChatMessage = {
-        id: messages.length + 2,
-        text: responses[Math.floor(Math.random() * responses.length)],
-        sender: 'ai',
+      const aiResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        sender: 'assistant',
+        text: "That's a great question! Let me explain... [This is where the AI would provide a helpful answer based on the Zambian curriculum]",
         timestamp: new Date()
       };
-
-      setMessages(prev => [...prev, aiMessage]);
-      setIsTyping(false);
-      onMascotStateChange('explaining');
-
-      // Return to idle after explanation
-      setTimeout(() => {
-        onMascotStateChange('idle');
-      }, 3000);
+      setMessages(prev => [...prev, aiResponse]);
+      setMascotEmotion('happy');
     }, 1500);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
+  const handleVoiceInput = () => {
+    setIsRecording(!isRecording);
+    if (!isRecording) {
+      setMascotEmotion('talking');
+      // Simulate voice recognition
+      setTimeout(() => {
+        setInputText("Can you help me understand photosynthesis?");
+        setIsRecording(false);
+        setMascotEmotion('neutral');
+      }, 2000);
     }
   };
 
+  const clearHistory = () => {
+    setMessages([{
+      id: Date.now().toString(),
+      sender: 'assistant',
+      text: `Chat cleared! I'm ${tierInfo?.mascotName}. What would you like to learn?`,
+      timestamp: new Date()
+    }]);
+  };
+
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      maxWidth: '800px',
-      margin: '0 auto',
-      padding: '20px'
-    }}>
-      {/* Header */}
-      <motion.div
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.68, -0.55, 0.265, 1.55] }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '15px',
-          marginBottom: '20px',
-          padding: '15px',
-          border: '3px solid #1a1a1a',
-          borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
-          background: 'radial-gradient(ellipse at center, #f4e4c1 0%, #e8d5b5 60%, #c4a882 100%)',
-          boxShadow: '0 0 0 3px #1a1a1a, 4px 4px 0 rgba(0,0,0,0.2)',
-          animation: 'inkWobble 3s ease-in-out infinite'
-        }}
-      >
-        <motion.button
-          onClick={onBack}
-          whileHover={{ scale: 1.2, rotate: [-5, 5, -5, 0] }}
-          whileTap={{ scale: 0.9 }}
-          style={{
-            width: '40px',
-            height: '40px',
-            border: '3px solid #1a1a1a',
-            borderRadius: '50%',
-            background: 'radial-gradient(ellipse at center, #d4a017 0%, #b8860b 100%)',
-            cursor: 'pointer',
-            fontSize: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '3px 3px 0 rgba(0,0,0,0.3)'
-          }}
+    <div className="pt-24 pb-12 px-4 paper-texture min-h-screen">
+      <div className="film-grain" />
+      
+      <div className="max-w-5xl mx-auto relative z-10 h-[calc(100vh-8rem)] flex gap-6">
+        {/* Mascot Sidebar - Always visible */}
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="hidden lg:block w-64 flex-shrink-0"
         >
-          ←
-        </motion.button>
-        <h2 style={{
-          fontFamily: 'Georgia, serif',
-          fontSize: '24px',
-          fontWeight: 'bold',
-          color: '#1a1a1a'
+          <div className="sticky top-28">
+            <MascotOverlay emotion={mascotEmotion} message="Ready to help!" />
+            
+            {/* Quick Tools */}
+            <div className="mt-6 space-y-3">
+              {tools.includes('calculator') && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full ink-border bg-[#faf6ed] p-3 font-semibold watercolor-fill flex items-center justify-center gap-2"
+                >
+                  <Icons.Calculator size={20} />
+                  Calculator
+                </motion.button>
+              )}
+              
+              {tools.includes('upload') && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full ink-border bg-[#faf6ed] p-3 font-semibold watercolor-fill flex items-center justify-center gap-2"
+                >
+                  <Icons.Paperclip size={20} />
+                  Upload File
+                </motion.button>
+              )}
+              
+              {tools.includes('delete-history') && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={clearHistory}
+                  className="w-full ink-border bg-[#ffcccc] p-3 font-semibold watercolor-fill flex items-center justify-center gap-2 text-[#8b1538]"
+                >
+                  <Icons.Trash2 size={20} />
+                  Clear Chat
+                </motion.button>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col ink-border bg-[#faf6ed] watercolor-fill overflow-hidden" style={{
+          borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
+          borderWidth: '3px'
         }}>
-          💬 Study Hall Chat
-        </h2>
-      </motion.div>
-
-      {/* Messages Area */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.4, ease: [0.175, 0.885, 0.32, 1.275] }}
-        className="cuphead-card"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          marginBottom: '20px',
-          padding: '20px',
-          border: '3px solid #1a1a1a',
-          borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
-          background: 'radial-gradient(ellipse at center, #f4e4c1 0%, #e8d5b5 60%, #c4a882 100%)',
-          boxShadow: 'inset 0 0 60px rgba(26,26,26,0.1)'
-        }}
-      >
-        <AnimatePresence>
-          {messages.map((message, index) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, x: message.sender === 'user' ? 100 : -100, scale: 0.8 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{
-                duration: 0.5,
-                ease: [0.68, -0.55, 0.265, 1.55],
-                delay: index * 0.1
-              }}
-              style={{
-                display: 'flex',
-                justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-                marginBottom: '15px'
-              }}
-            >
-              <div style={{
-                maxWidth: '70%',
-                padding: '15px 20px',
-                border: '3px solid #1a1a1a',
-                borderRadius: message.sender === 'user' 
-                  ? '255px 15px 15px 255px / 15px 225px 225px 15px'
-                  : '15px 255px 255px 15px / 225px 15px 15px 255px',
-                background: message.sender === 'user'
-                  ? 'radial-gradient(ellipse at center, #8b1538 0%, #6b0f2a 100%)'
-                  : 'radial-gradient(ellipse at center, #ffffff 0%, #f4e4c1 100%)',
-                color: message.sender === 'user' ? '#fff' : '#1a1a1a',
-                boxShadow: '4px 4px 0 rgba(0,0,0,0.2)',
-                animation: 'inkWobble 2s ease-in-out infinite',
-                position: 'relative'
-              }}>
-                <p style={{
-                  fontSize: '16px',
-                  lineHeight: '1.5',
-                  fontFamily: 'Courier New, monospace'
-                }}>
-                  {message.text}
-                </p>
-                
-                {/* Timestamp */}
-                <span style={{
-                  display: 'block',
-                  fontSize: '11px',
-                  marginTop: '8px',
-                  opacity: 0.7,
-                  fontFamily: 'Georgia, serif'
-                }}>
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-
-                {/* Ink splash decoration */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-10px',
-                  right: message.sender === 'user' ? '-10px' : 'auto',
-                  left: message.sender === 'user' ? 'auto' : '-10px',
-                  width: '30px',
-                  height: '30px',
-                  background: 'radial-gradient(circle, rgba(26,26,26,0.1) 0%, transparent 70%)',
-                  borderRadius: '50%'
-                }} />
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {/* Typing Indicator */}
-        <AnimatePresence>
-          {isTyping && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-start',
-                marginBottom: '15px'
-              }}
-            >
-              <div style={{
-                padding: '15px 20px',
-                border: '3px solid #1a1a1a',
-                borderRadius: '15px 255px 255px 15px / 225px 15px 15px 255px',
-                background: 'radial-gradient(ellipse at center, #ffffff 0%, #f4e4c1 100%)',
-                boxShadow: '4px 4px 0 rgba(0,0,0,0.2)',
-                animation: 'inkWobble 2s ease-in-out infinite'
-              }}>
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  {[0, 1, 2].map(i => (
-                    <motion.div
-                      key={i}
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{
-                        duration: 0.6,
-                        repeat: Infinity,
-                        delay: i * 0.2,
-                        ease: [0.68, -0.55, 0.265, 1.55]
-                      }}
-                      style={{
-                        width: '10px',
-                        height: '10px',
-                        background: '#1a1a1a',
-                        borderRadius: '50%'
-                      }}
-                    />
-                  ))}
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((message, index) => (
+              <motion.div
+                key={message.id}
+                initial={{ y: 20, opacity: 0, scale: 0.9 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] p-4 ink-border watercolor-fill ink-shadow ${
+                    message.sender === 'user' 
+                      ? 'bg-[#6C5CE7] text-white' 
+                      : 'bg-white text-[#1a1a1a]'
+                  }`}
+                  style={{
+                    borderRadius: message.sender === 'user'
+                      ? '225px 15px 255px 15px / 15px 255px 15px 225px'
+                      : '15px 225px 15px 255px / 255px 15px 225px 15px',
+                    borderWidth: '2px'
+                  }}
+                >
+                  <p className={message.sender === 'user' ? 'text-white' : 'text-[#1a1a1a]'}>
+                    {message.text}
+                  </p>
+                  <p className={`text-xs mt-2 ${message.sender === 'user' ? 'text-white/70' : 'text-[#636E72]'}`}>
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
                 </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Input Area */}
+          <div className="p-4 border-t border-[#dfe6e9]">
+            {/* Voice button prominent for Tier 1 */}
+            {showVoiceFirst && (
+              <div className="flex justify-center mb-4">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleVoiceInput}
+                  className={`w-20 h-20 rounded-full ink-border ink-shadow flex items-center justify-center text-4xl voice-pulse ${
+                    isRecording ? 'bg-[#FF6B6B] text-white' : 'bg-[#faf6ed] text-[#FF6B6B]'
+                  }`}
+                  style={{
+                    borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
+                    borderWidth: '3px'
+                  }}
+                >
+                  {isRecording ? <Icons.StopCircle size={40} /> : <Icons.Mic size={40} />}
+                </motion.button>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            )}
 
-        <div ref={messagesEndRef} />
-      </motion.div>
+            <div className="flex items-center gap-3">
+              {/* Emoji button for Tier 1 */}
+              {tools.includes('emoji') && (
+                <motion.button
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="text-3xl"
+                >
+                  😊
+                </motion.button>
+              )}
 
-      {/* Input Area */}
-      <motion.div
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.3, ease: [0.175, 0.885, 0.32, 1.275] }}
-        style={{
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'center'
-        }}
-      >
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Ask me anything, partner..."
-          style={{
-            flex: 1,
-            padding: '15px 20px',
-            border: '3px solid #1a1a1a',
-            borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
-            background: 'radial-gradient(ellipse at center, #ffffff 0%, #f4e4c1 100%)',
-            fontFamily: 'Courier New, monospace',
-            fontSize: '16px',
-            outline: 'none',
-            boxShadow: '0 0 0 3px #1a1a1a, inset 0 0 20px rgba(26,26,26,0.1)',
-            animation: 'inkWobble 3s ease-in-out infinite'
-          }}
-        />
-        
-        <motion.button
-          onClick={handleSend}
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          whileTap={{ scale: 0.95 }}
-          className="cuphead-btn"
-          style={{
-            padding: '15px 30px',
-            border: '3px solid #1a1a1a',
-            borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
-            background: 'radial-gradient(ellipse at center, #d4a017 0%, #b8860b 100%)',
-            fontFamily: 'Georgia, serif',
-            fontWeight: 'bold',
-            fontSize: '18px',
-            cursor: 'pointer',
-            boxShadow: '0 0 0 3px #1a1a1a, 4px 4px 0 rgba(0,0,0,0.2)',
-            animation: 'inkWobble 3s ease-in-out infinite'
-          }}
-        >
-          Send! →
-        </motion.button>
-      </motion.div>
+              {/* Text Input */}
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder={showVoiceFirst ? "Type or use voice..." : "Type your question..."}
+                className="flex-1 ink-border bg-white p-4 outline-none text-[#1a1a1a] text-lg font-medium watercolor-fill"
+                style={{
+                  fontSize: currentTier === 1 ? '1.2rem' : '1rem',
+                  borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
+                  borderWidth: '2px'
+                }}
+              />
+
+              {/* Voice button for Tier 2 & 3 */}
+              {!showVoiceFirst && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleVoiceInput}
+                  className={`w-14 h-14 rounded-full ink-border ink-shadow flex items-center justify-center text-2xl ${
+                    isRecording ? 'bg-[#FF6B6B] text-white' : 'bg-[#faf6ed] text-[#636E72]'
+                  }`}
+                >
+                  {isRecording ? <Icons.StopCircle size={24} /> : <Icons.Mic size={24} />}
+                </motion.button>
+              )}
+
+              {/* Send Button */}
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleSendMessage}
+                className="w-14 h-14 rounded-full ink-border ink-shadow flex items-center justify-center bg-[#8b1538] text-white"
+                style={{
+                  borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
+                  borderWidth: '3px'
+                }}
+              >
+                <Icons.Send size={24} />
+              </motion.button>
+            </div>
+
+            {/* Recording indicator */}
+            {isRecording && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center mt-3 text-[#FF6B6B] font-semibold flex items-center justify-center gap-2"
+              >
+                <motion.span
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 0.5, repeat: Infinity }}
+                >
+                  🔴
+                </motion.span>
+                Listening...
+              </motion.div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
-}
+};

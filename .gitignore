@@ -5,37 +5,15 @@ node_modules/
 # Build outputs
 dist/
 build/
-target/
-
-# TypeScript/JavaScript
-*.tsbuildinfo
-*.js.map
-*.jsx.map
-*.ts.map
+coverage/
+htmlcov/
 
 # Environment variables
 .env
 .env.local
 *.env.*
 
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-
-# Coverage
-coverage/
-htmlcov/
-*.coverage
-
-# Python (if present)
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -46,28 +24,41 @@ venv/
 .venv/
 pip-log.txt
 pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.pot
+*.po
+*~
 .pytest_cache/
 .mypy_cache/
+.hypothesis/
 
-# Distribution / packaging
-.Python
-env/
-venv/
-.venv/
-.ENV
-.venv.bak/
-env.bak/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
 
-# Testing
-tests/output/
-.coverage
-
-# OS generated files
+# OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
+
+# Logs
+*.log
+
+# TypeScript/JavaScript
+tsconfig.tsbuildinfo
+dist/
+out/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 ```

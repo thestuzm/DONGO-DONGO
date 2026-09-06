@@ -1,211 +1,218 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useAppStore, TIER_INFO } from '../store/appStore';
+import { getSubjectsByTier } from '../data/curriculum';
+import * as Icons from 'lucide-react';
 
-interface TopicCard {
-  id: number;
-  title: string;
-  description: string;
-  progress: number;
-  icon: string;
-  color: string;
-}
+export const TopicDashboard: React.FC = () => {
+  const { currentTier, setSelectedSubject } = useAppStore();
+  const tierInfo = currentTier ? TIER_INFO[currentTier] : null;
+  const subjects = currentTier ? getSubjectsByTier(currentTier) : [];
+  const [searchQuery, setSearchQuery] = useState('');
 
-interface TopicDashboardProps {
-  onSelectTopic: () => void;
-}
+  const filteredSubjects = subjects.filter(subject =>
+    subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    subject.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-export default function TopicDashboard({ onSelectTopic }: TopicDashboardProps) {
-  const topics: TopicCard[] = [
-    {
-      id: 1,
-      title: 'Algebra Basics',
-      description: 'Master equations and variables',
-      progress: 75,
-      icon: '🔢',
-      color: '#8b1538'
-    },
-    {
-      id: 2,
-      title: 'Geometry Fun',
-      description: 'Shapes, angles, and proofs',
-      progress: 45,
-      icon: '📐',
-      color: '#d4a017'
-    },
-    {
-      id: 3,
-      title: 'Physics World',
-      description: 'Motion, forces, and energy',
-      progress: 30,
-      icon: '⚡',
-      color: '#1a5f7a'
-    },
-    {
-      id: 4,
-      title: 'Chemistry Lab',
-      description: 'Elements and reactions',
-      progress: 60,
-      icon: '🧪',
-      color: '#2d5016'
-    },
-    {
-      id: 5,
-      title: 'Biology Life',
-      description: 'Cells, organisms, ecosystems',
-      progress: 20,
-      icon: '🌿',
-      color: '#15571a'
-    },
-    {
-      id: 6,
-      title: 'History Time',
-      description: 'Past events and civilizations',
-      progress: 90,
-      icon: '📜',
-      color: '#8b4513'
-    }
-  ];
+  // Netflix-style featured section for Tier 3
+  const isAdvancedTier = currentTier === 3;
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-      gap: '20px',
-      padding: '20px',
-      height: '100%',
-      overflowY: 'auto'
-    }}>
-      {topics.map((topic, index) => (
+    <div className="pt-24 pb-12 px-4 paper-texture min-h-screen">
+      <div className="film-grain" />
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
         <motion.div
-          key={topic.id}
-          className="cuphead-card"
-          initial={{ opacity: 0, y: 100, rotate: -5 }}
-          animate={{ opacity: 1, y: 0, rotate: 0 }}
-          transition={{
-            delay: index * 0.1,
-            duration: 0.6,
-            ease: [0.68, -0.55, 0.265, 1.55]
-          }}
-          whileHover={{
-            scale: 1.05,
-            rotate: [0, -3, 3, 0],
-            boxShadow: '0 0 30px rgba(0,0,0,0.4)'
-          }}
-          onClick={onSelectTopic}
-          style={{
-            padding: '25px',
-            border: '3px solid #1a1a1a',
-            borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
-            background: `radial-gradient(ellipse at center, #f4e4c1 0%, #e8d5b5 60%, #c4a882 100%)`,
-            cursor: 'pointer',
-            position: 'relative',
-            overflow: 'hidden',
-            animation: 'inkWobble 3s ease-in-out infinite'
-          }}
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mb-8"
         >
-          {/* Icon Badge */}
-          <div style={{
-            position: 'absolute',
-            top: '-15px',
-            right: '-15px',
-            width: '60px',
-            height: '60px',
-            background: `radial-gradient(ellipse at center, ${topic.color} 0%, ${topic.color}cc 100%)`,
-            border: '3px solid #1a1a1a',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '28px',
-            boxShadow: '3px 3px 0 rgba(0,0,0,0.3)',
-            animation: 'inkWobble 2s ease-in-out infinite reverse'
-          }}>
-            {topic.icon}
-          </div>
-
-          {/* Title */}
-          <h3 style={{
-            fontFamily: 'Georgia, serif',
-            fontSize: '22px',
-            fontWeight: 'bold',
-            marginBottom: '10px',
-            color: '#1a1a1a'
-          }}>
-            {topic.title}
-          </h3>
-
-          {/* Description */}
-          <p style={{
-            fontSize: '14px',
-            marginBottom: '20px',
-            color: '#333',
-            lineHeight: '1.4'
-          }}>
-            {topic.description}
+          <h1 
+            className="text-3xl md:text-5xl font-bold text-[#8b1538] mb-2"
+            style={{ fontFamily: "'Comic Neue', cursive" }}
+          >
+            Your Learning Topics
+          </h1>
+          <p className="text-[#636E72] text-lg">
+            {tierInfo?.grades} - Explore your subjects
           </p>
-
-          {/* Progress Bar */}
-          <div style={{
-            width: '100%',
-            height: '20px',
-            background: 'rgba(0,0,0,0.1)',
-            border: '2px solid #1a1a1a',
-            borderRadius: '10px',
-            overflow: 'hidden',
-            position: 'relative'
-          }}>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${topic.progress}%` }}
-              transition={{
-                delay: index * 0.1 + 0.3,
-                duration: 0.8,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
-              style={{
-                height: '100%',
-                background: `linear-gradient(90deg, ${topic.color}, ${topic.color}dd)`,
-                border: '2px solid #1a1a1a',
-                borderRadius: '10px',
-                position: 'relative'
-              }}
-            >
-              {/* Watercolor texture overlay */}
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.3'/%3E%3C/svg%3E")`,
-                opacity: 0.5
-              }} />
-            </motion.div>
-          </div>
-
-          {/* Progress Text */}
-          <p style={{
-            textAlign: 'right',
-            fontSize: '12px',
-            marginTop: '8px',
-            fontWeight: 'bold',
-            fontFamily: 'Georgia, serif'
-          }}>
-            {topic.progress}% Complete
-          </p>
-
-          {/* Ink Splash Decoration */}
-          <div style={{
-            position: 'absolute',
-            bottom: '-20px',
-            left: '-20px',
-            width: '100px',
-            height: '100px',
-            background: 'radial-gradient(circle, rgba(26,26,26,0.05) 0%, transparent 70%)',
-            borderRadius: '50%',
-            pointerEvents: 'none'
-          }} />
         </motion.div>
-      ))}
+
+        {/* Search Bar - More prominent for Tier 1 */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className={`mb-8 ${currentTier === 1 ? 'max-w-md' : 'max-w-xl'}`}
+        >
+          <div className="ink-border bg-[#faf6ed] watercolor-fill flex items-center gap-3 p-3 ink-shadow">
+            <Icons.Search size={24} className="text-[#636E72]" />
+            <input
+              type="text"
+              placeholder={currentTier === 1 ? "Find a subject..." : "Search subjects, topics..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent border-none outline-none text-[#1a1a1a] text-lg font-medium placeholder-[#B2BEC3]"
+              style={{ fontSize: currentTier === 1 ? '1.2rem' : '1rem' }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Featured Section for Advanced Tier */}
+        {isAdvancedTier && (
+          <motion.div
+            initial={{ x: -100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="mb-12"
+          >
+            <h2 className="text-2xl font-bold text-[#1a1a1a] mb-4 flex items-center gap-2">
+              <span className="text-3xl">🔥</span>
+              Featured for Exams
+            </h2>
+            <div className="carousel-track">
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  whileHover={{ scale: 1.02 }}
+                  className="carousel-item ink-border ink-shadow overflow-hidden cursor-pointer"
+                  style={{
+                    borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px',
+                    borderWidth: '3px'
+                  }}
+                >
+                  <div className="h-40 bg-gradient-to-br from-[#8b1538] to-[#d4a017] flex items-center justify-center">
+                    <span className="text-6xl">📚</span>
+                  </div>
+                  <div className="p-4 bg-[#faf6ed]">
+                    <h3 className="font-bold text-lg text-[#1a1a1a]">Advanced Calculus</h3>
+                    <p className="text-sm text-[#636E72] mt-1">Master derivatives and integrals</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Subject Grid - Layout varies by tier */}
+        <div className={
+          currentTier === 1 
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
+            : currentTier === 2
+              ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+              : "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
+        }>
+          {filteredSubjects.map((subject, index) => {
+            const IconComponent = Icons[subject.icon as keyof typeof Icons] as React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }> || Icons.BookOpen;
+            
+            return (
+              <motion.div
+                key={subject.id}
+                initial={{ y: 50, opacity: 0, scale: 0.9 }}
+                animate={{ 
+                  y: 0, 
+                  opacity: 1, 
+                  scale: 1,
+                  rotate: currentTier === 1 ? [0, 2, 0, -2, 0] : 0
+                }}
+                transition={{ 
+                  delay: index * 0.1,
+                  duration: currentTier === 1 ? 0.8 : 0.5,
+                  ease: currentTier === 1 ? [0.68, -0.55, 0.265, 1.55] : [0.4, 0, 0.2, 1]
+                }}
+                whileHover={{ 
+                  y: -8,
+                  scale: 1.05,
+                  rotate: currentTier === 1 ? 3 : 0
+                }}
+                onClick={() => setSelectedSubject(subject.id)}
+                className="card-lift ink-border ink-shadow cursor-pointer overflow-hidden bg-[#faf6ed] watercolor-fill"
+                style={{
+                  borderRadius: currentTier === 1 
+                    ? '255px 15px 225px 15px / 15px 225px 15px 255px'
+                    : currentTier === 2
+                      ? '25px 225px 25px 255px / 255px 25px 225px 15px'
+                      : '15px 225px 15px 255px / 255px 15px 225px 15px',
+                  borderWidth: '3px',
+                  borderColor: subject.color
+                }}
+              >
+                {/* Icon Header */}
+                <div 
+                  className="p-4 flex items-center justify-between"
+                  style={{ backgroundColor: subject.color + '30' }}
+                >
+                  <div 
+                    className="w-14 h-14 rounded-full flex items-center justify-center ink-border bg-white"
+                    style={{ color: subject.color }}
+                  >
+                    <IconComponent size={28} strokeWidth={2.5} />
+                  </div>
+                  {currentTier === 1 && (
+                    <motion.span
+                      animate={{ rotate: [0, 15, 0, -15, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-2xl"
+                    >
+                      ✨
+                    </motion.span>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                  <h3 
+                    className="font-bold text-lg mb-2"
+                    style={{ 
+                      fontSize: currentTier === 1 ? '1.3rem' : '1.1rem',
+                      color: subject.color
+                    }}
+                  >
+                    {subject.name}
+                  </h3>
+                  <p className="text-sm text-[#636E72] line-clamp-2">
+                    {subject.description}
+                  </p>
+                  
+                  {/* Progress indicator for Tier 2 & 3 */}
+                  {currentTier !== 1 && (
+                    <div className="mt-4">
+                      <div className="flex justify-between text-xs text-[#636E72] mb-1">
+                        <span>Progress</span>
+                        <span>{Math.floor(Math.random() * 60)}%</span>
+                      </div>
+                      <div className="h-2 bg-[#dfe6e9] rounded-full overflow-hidden ink-border">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.floor(Math.random() * 60)}%` }}
+                          transition={{ delay: index * 0.1 + 0.5, duration: 1 }}
+                          className="h-full"
+                          style={{ backgroundColor: subject.color }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Empty state */}
+        {filteredSubjects.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
+            <span className="text-6xl block mb-4">🔍</span>
+            <p className="text-xl text-[#636E72] font-medium">
+              No subjects found matching "{searchQuery}"
+            </p>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
-}
+};

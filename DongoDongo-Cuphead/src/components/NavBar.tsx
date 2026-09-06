@@ -1,60 +1,116 @@
+import React from 'react';
 import { motion } from 'framer-motion';
+import { useAppStore, TIER_INFO } from '../store/appStore';
+import * as Icons from 'lucide-react';
 
 interface NavBarProps {
-  activeTab: 'dashboard' | 'chat' | 'quiz';
-  onTabChange: (tab: 'dashboard' | 'chat' | 'quiz') => void;
+  activeTab: 'topics' | 'chat' | 'quiz';
+  onTabChange: (tab: 'topics' | 'chat' | 'quiz') => void;
 }
 
-export default function NavBar({ activeTab, onTabChange }: NavBarProps) {
+export const NavBar: React.FC<NavBarProps> = ({ activeTab, onTabChange }) => {
+  const { currentTier, resetApp } = useAppStore();
+  const tierInfo = currentTier ? TIER_INFO[currentTier] : null;
+
   const tabs = [
-    { id: 'dashboard', label: '📚 Topics', icon: '📖' },
-    { id: 'chat', label: '💬 Chat', icon: '💭' },
-    { id: 'quiz', label: '📝 Quiz', icon: '✏️' }
-  ] as const;
+    { id: 'topics' as const, icon: 'book-open', label: 'Topics' },
+    { id: 'chat' as const, icon: 'message-circle', label: 'Chat' },
+    { id: 'quiz' as const, icon: 'award', label: 'Quiz' }
+  ];
 
   return (
-    <nav style={{
-      position: 'absolute',
-      top: '20px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      zIndex: 100,
-      display: 'flex',
-      gap: '10px',
-      padding: '10px',
-    }}>
-      {tabs.map((tab) => (
-        <motion.button
-          key={tab.id}
-          className="cuphead-btn"
-          onClick={() => onTabChange(tab.id)}
-          whileHover={{ scale: 1.1, rotate: [-2, 2, -2, 0] }}
-          whileTap={{ scale: 0.95 }}
-          animate={activeTab === tab.id ? { y: [0, -5, 0] } : {}}
-          transition={{
-            duration: 0.3,
-            ease: [0.68, -0.55, 0.265, 1.55],
-            repeat: activeTab === tab.id ? Infinity : 0,
-            repeatDelay: 2
-          }}
-          style={{
-            padding: '12px 24px',
-            border: '3px solid #1a1a1a',
-            borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
-            background: activeTab === tab.id 
-              ? 'radial-gradient(ellipse at center, #f4d03f 0%, #d4a017 60%, #b8860b 100%)'
-              : 'radial-gradient(ellipse at center, #f4e4c1 0%, #e8d5b5 60%, #c4a882 100%)',
-            fontFamily: 'Georgia, serif',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            cursor: 'pointer',
-            boxShadow: '0 0 0 3px #1a1a1a, 4px 4px 0 rgba(0,0,0,0.2)',
-            animation: activeTab === tab.id ? 'inkWobble 3s ease-in-out infinite' : 'none'
-          }}
-        >
-          {tab.icon} {tab.label}
-        </motion.button>
-      ))}
-    </nav>
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className="fixed top-0 left-0 right-0 z-40 ink-border ink-shadow bg-[#f5f1e8] watercolor-fill"
+      style={{
+        borderBottomWidth: '3px',
+        borderRadius: '0 0 255px 15px / 0 0 15px 255px'
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <motion.div
+            whileHover={{ scale: 1.05, rotate: 2 }}
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={resetApp}
+          >
+            <div 
+              className="ink-border bg-[#8b1538] text-[#faf6ed] px-4 py-2 font-bold watercolor-fill"
+              style={{
+                borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px',
+                borderWidth: '2px'
+              }}
+            >
+              DD
+            </div>
+            {tierInfo && (
+              <span className="hidden md:block text-sm font-medium text-[#636E72]">
+                {tierInfo.name}
+              </span>
+            )}
+          </motion.div>
+
+          {/* Tab Navigation */}
+          <div className="flex items-center gap-2 tab-nav">
+            {tabs.map((tab) => {
+              const IconComponent = Icons[tab.icon as keyof typeof Icons] as React.ComponentType<any>;
+              const isActive = activeTab === tab.id;
+              
+              return (
+                <motion.button
+                  key={tab.id}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => onTabChange(tab.id)}
+                  className={`relative px-4 py-2 font-semibold transition-colors ${
+                    isActive ? 'text-[#8b1538]' : 'text-[#636E72]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <IconComponent size={20} />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                  </div>
+                  
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute bottom-0 left-0 right-0 h-1 bg-[#8b1538]"
+                      style={{
+                        borderRadius: '2px'
+                      }}
+                      initial={false}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30
+                      }}
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {/* Profile Indicator */}
+          {currentTier && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="hidden md:flex items-center gap-2"
+            >
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: tierInfo?.colorPrimary }}
+              />
+              <span className="text-sm font-medium text-[#1a1a1a]">
+                Tier {currentTier}
+              </span>
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </motion.nav>
   );
-}
+};

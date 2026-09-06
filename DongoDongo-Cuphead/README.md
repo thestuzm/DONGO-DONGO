@@ -1,112 +1,101 @@
-# Dongo Dongo Copilot - Cuphead Edition
+# Dongo Dongo Copilot - Zambian Learning Platform
 
-A 1930s cartoon-styled educational copilot application inspired by Cuphead's aesthetic, built for Zambian Grade 12 students.
+A beautifully designed educational platform tailored for Zambian students from Grade 3 to Grade 12, featuring a unique Cuphead-inspired Disney vector art style with film grain textures and organic ink borders.
 
-## 🎨 Visual Features
+## Features
 
-- **Hand-Drawn Ink Borders**: Organic wobbly borders using asymmetric border-radius
-- **Watercolor Fill Effects**: Radial gradients with vintage color palette
-- **Rubber-Hose Animations**: Custom bezier curves for 1930s cartoon bounce
-- **Film Grain Overlay**: SVG noise filter with animated grain shift
-- **Paper Texture**: 8% opacity noise overlay on all surfaces
-- **Squash & Stretch**: Interactive hover/press states with scale transformations
-- **Ink Bleed Shadows**: Multi-layer shadows for depth
+### Three Learning Tiers (Difficulty Profiles)
 
-## 🚀 Quick Start
+1. **The Gentle Waltz** (Grades 3-6)
+   - Playful, colorful interface
+   - Voice-first chat interaction
+   - Game-based learning
+   - Mascot: Professor Whiskers (nerdy owl with glasses & bow tie)
 
-### Development
+2. **The Midnight Chase** (Grades 7-9)
+   - Balanced design maturity
+   - Text + tools chat interface
+   - Quiz and game hybrid
+   - Mascot: Alex the Guide (mature assistant)
+
+3. **The Last Ride** (Grades 10-12)
+   - Sophisticated, professional UI
+   - Full toolset including calculator, file uploads, chat history management
+   - Advanced assessments with leaderboards
+   - Mascot: Dr. Sage (wise mentor)
+
+### Zambian Curriculum Subjects
+
+**Tier 1 (Gentle Waltz):** English, Math, Civic Education, Science, Geography, Computer (I.T), Food & Nutrition, Safety, Arts
+
+**Tier 2 (Midnight Chase):** English, Math, Sciences, Business Studies, Safety & First Aid, Computer (I.T), Civic Education, Geography, Design & Technology
+
+**Tier 3 (Last Ride):** English, Math, Advanced Math, Physics, Chemistry, Biology, Design Tech & AI, Computer (I.T), Literature, Geography, Business Education, Business Studies, Arts & Crafts, Safety & First Aid
+
+### Key Components
+
+- **Loading Screen:** Animated startup with progress bar
+- **Profile Selection:** Three beautiful difficulty cards
+- **Topics Dashboard:** Netflix-style carousel subject browser
+- **Chat Interface:** Mascot-powered assistant with age-appropriate tools
+- **Quiz Section:** Games and assessments tailored to each tier
+
+## Design Philosophy
+
+- **Vector-based edges:** Clean, smooth outlines like Adobe Illustrator
+- **Disney-style aesthetics:** Playful yet sophisticated
+- **Film grain overlay:** 600 DPI texture effect for depth
+- **Organic shapes:** Wobbly, hand-drawn border radius
+- **Rubber hose animations:** Bouncy, elastic transitions
+- **Watercolor fills:** Subtle gradient backgrounds
+
+## Tech Stack
+
+- React 18 with TypeScript
+- Vite for build tooling
+- Framer Motion for animations
+- TailwindCSS for styling
+- Zustand for state management
+- Lucide React for icons
+
+## Getting Started
+
 ```bash
+# Install dependencies
 npm install
+
+# Development server
 npm run dev
-```
 
-### Production Build
-```bash
+# Production build
 npm run build
-npm run preview
+
+# Deploy to Netlify
+npm run deploy
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-DongoDongo-Cuphead/
-├── src/
-│   ├── App.tsx                 # Main application component
-│   ├── main.tsx                # React entry point
-│   ├── components/
-│   │   ├── NavBar.tsx          # Animated navigation bar
-│   │   ├── TopicDashboard.tsx  # Topic cards with progress
-│   │   ├── ChatInterface.tsx   # Chat bubbles with ink effects
-│   │   └── MascotOverlay.tsx   # Animated mascot character
-│   └── styles/
-│       └── global.scss         # Design system & mixins
-├── dist/                       # Production build output
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── README.md
+src/
+├── components/
+│   ├── Mascot.tsx          # Animated mascot with emotions
+│   ├── LoadingScreen.tsx   # Startup loading animation
+│   ├── ProfileSelect.tsx   # Difficulty selection screen
+│   ├── NavBar.tsx          # Bottom navigation
+│   ├── TopicsDashboard.tsx # Subject browser (Netflix-style)
+│   ├── ChatInterface.tsx   # Mascot chat with tools
+│   └── QuizSection.tsx     # Games and assessments
+├── hooks/
+│   └── useStore.ts         # Zustand state management
+├── data/
+│   └── curriculum.ts       # Zambian curriculum data
+├── styles/
+│   └── global.scss         # Custom CSS with animations
+├── App.tsx                 # Main application
+└── main.tsx               # Entry point
 ```
 
-## 🎯 Tech Stack
+## License
 
-- **React 19** with TypeScript
-- **Vite** for blazing fast builds
-- **Sass/SCSS** for advanced styling
-- **Framer Motion** for rubber-hose animations
-- **Three.js** for 3D background effects
-- **SVG Filters** for film grain and ink effects
-
-## 🎨 Design System
-
-### Color Palette (WCAG 2.1 AA Compliant)
-- **Ink Black**: `#1a1a1a` - Primary text and borders
-- **Paper White**: `#f4e4c1` - Background base
-- **Burgundy Red**: `#8b1538` - Accents and highlights
-- **Mustard Yellow**: `#d4a017` - Secondary accents
-
-### Typography
-- Primary: 'Courier New', monospace (typewriter aesthetic)
-- Headings: Bold, hand-drawn feel
-- Body: Readable monospace for educational content
-
-### Animation Curves
-- Rubber-hose bounce: `cubic-bezier(0.68, -0.55, 0.265, 1.55)`
-- Smooth ease: `cubic-bezier(0.25, 0.46, 0.45, 0.94)`
-
-## 📦 Build Output
-
-Production build generates:
-- `dist/index.html` - Entry HTML file
-- `dist/assets/index.[hash].js` - Minified JavaScript bundle (~1.36 MB)
-- `dist/assets/index.[hash].css` - Minified CSS bundle (~2.51 KB)
-
-## 🌐 Deployment
-
-The `dist/` folder contains all production-ready files. Deploy to any static hosting:
-
-- **Netlify**: Drag and drop `dist/` folder
-- **Vercel**: Connect repository and set build command to `npm run build`
-- **GitHub Pages**: Push `dist/` to gh-pages branch
-- **Azure Static Web Apps**: Configure build output to `dist`
-
-## 🎮 Interactive Features
-
-1. **Navigation Bar**: Wobbly hover effects with ink bleed shadows
-2. **Topic Cards**: Progress bars with watercolor fills
-3. **Chat Interface**: Hand-drawn chat bubbles with contextual mascot reactions
-4. **Mascot Overlay**: 4 animation states (idle, thinking, happy, explaining)
-
-## ♿ Accessibility
-
-- WCAG 2.1 AA contrast ratios maintained throughout
-- Keyboard navigation support
-- Screen reader friendly structure
-- Reduced motion option via CSS media query
-
-## 📝 License
-
-Educational project for Zambian Grade 12 students.
-
----
-
-**Built with ❤️ for Dongo Dongo**
+MIT
