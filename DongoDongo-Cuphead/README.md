@@ -1,122 +1,112 @@
-# Dongo Dongo Copilot - Cuphead Style Educational App
+# Dongo Dongo Copilot - Cuphead Edition
 
-A 1930s cartoon-styled educational tutor application for Zambian Grade 12 students, inspired by the visual aesthetic of Cuphead.
+A 1930s cartoon-styled educational copilot application inspired by Cuphead's aesthetic, built for Zambian Grade 12 students.
 
 ## 🎨 Visual Features
 
-- **Hand-drawn Ink Borders**: Organic, wobbly borders that mimic 1930s animation
-- **Watercolor Textures**: Subtle paper grain and watercolor fill effects
-- **Rubber Hose Animations**: Bouncy, elastic transitions and movements
-- **Vintage Color Palette**: Ink Black, Paper White, Burgundy Red, Mustard Yellow
-- **Animated Mascot**: "Dongo" the owl with 8 emotional states
+- **Hand-Drawn Ink Borders**: Organic wobbly borders using asymmetric border-radius
+- **Watercolor Fill Effects**: Radial gradients with vintage color palette
+- **Rubber-Hose Animations**: Custom bezier curves for 1930s cartoon bounce
+- **Film Grain Overlay**: SVG noise filter with animated grain shift
+- **Paper Texture**: 8% opacity noise overlay on all surfaces
+- **Squash & Stretch**: Interactive hover/press states with scale transformations
+- **Ink Bleed Shadows**: Multi-layer shadows for depth
 
-## 🛠️ Tech Stack
+## 🚀 Quick Start
 
-- **Runtime**: Electron (v44)
-- **Frontend**: React 19 + TypeScript
-- **Styling**: SCSS with custom mixins for Cuphead effects
-- **Build**: Webpack 5
-- **Platform**: Windows (NSIS installer)
+### Development
+```bash
+npm install
+npm run dev
+```
+
+### Production Build
+```bash
+npm run build
+npm run preview
+```
 
 ## 📁 Project Structure
 
 ```
 DongoDongo-Cuphead/
 ├── src/
-│   ├── main/           # Electron main process
-│   │   ├── main.js
-│   │   └── preload.js
-│   └── renderer/       # React frontend
-│       ├── components/ # UI components
-│       │   ├── NavBar.tsx
-│       │   ├── TopicDashboard.tsx
-│       │   ├── ChatInterface.tsx
-│       │   └── MascotOverlay.tsx
-│       ├── styles/     # SCSS styles
-│       │   ├── global.scss
-│       │   └── components.scss
-│       ├── App.tsx
-│       └── index.tsx
-├── public/
-│   └── assets/         # Images, fonts, textures
+│   ├── App.tsx                 # Main application component
+│   ├── main.tsx                # React entry point
+│   ├── components/
+│   │   ├── NavBar.tsx          # Animated navigation bar
+│   │   ├── TopicDashboard.tsx  # Topic cards with progress
+│   │   ├── ChatInterface.tsx   # Chat bubbles with ink effects
+│   │   └── MascotOverlay.tsx   # Animated mascot character
+│   └── styles/
+│       └── global.scss         # Design system & mixins
+├── dist/                       # Production build output
 ├── package.json
-├── webpack.config.js
 ├── tsconfig.json
+├── vite.config.ts
 └── README.md
 ```
 
-## 🚀 Getting Started
+## 🎯 Tech Stack
 
-### Prerequisites
-- Node.js 20+
-- npm or yarn
-
-### Installation
-
-```bash
-cd DongoDongo-Cuphead
-npm install
-```
-
-### Development
-
-```bash
-npm start
-```
-
-This will:
-1. Start webpack in watch mode
-2. Launch the Electron app
-3. Open DevTools automatically
-
-### Production Build
-
-```bash
-npm run build
-```
-
-Output will be in the `release/` folder as a Windows installer.
-
-## 🎭 Mascot States
-
-The owl mascot "Dongo" has 8 animated states:
-- **Idle**: Gentle breathing animation
-- **Happy**: Smiling on dashboard
-- **Teaching**: Speech bubble in chat
-- **Thinking**: Looking sideways with thought bubbles
-- **Excited**: Flapping wings
-- **Celebrating**: Jumping animation
-- **Confused**: Tilting head
-- **Sleeping**: Closed eyes (after inactivity)
+- **React 19** with TypeScript
+- **Vite** for blazing fast builds
+- **Sass/SCSS** for advanced styling
+- **Framer Motion** for rubber-hose animations
+- **Three.js** for 3D background effects
+- **SVG Filters** for film grain and ink effects
 
 ## 🎨 Design System
 
-### Colors
-| Name | Hex | Usage |
-|------|-----|-------|
-| Ink Black | #1a1a1a | Borders, text |
-| Paper White | #f5f1e8 | Backgrounds |
-| Burgundy Red | #8b1538 | Primary actions |
-| Mustard Yellow | #d4a017 | Highlights |
-| Vintage Cream | #f9f4e6 | Main background |
-| Watercolor Blue | #4a6fa5 | Secondary accents |
-| Sepia Tone | #704214 | Muted text |
+### Color Palette (WCAG 2.1 AA Compliant)
+- **Ink Black**: `#1a1a1a` - Primary text and borders
+- **Paper White**: `#f4e4c1` - Background base
+- **Burgundy Red**: `#8b1538` - Accents and highlights
+- **Mustard Yellow**: `#d4a017` - Secondary accents
 
-### Key Effects
-- **Ink Border**: Asymmetric border-radius for hand-drawn look
-- **Paper Noise**: SVG turbulence filter at 8% opacity
-- **Rubber Easing**: cubic-bezier(0.68, -0.55, 0.265, 1.55)
-- **Watercolor Fill**: Radial gradients + noise texture
+### Typography
+- Primary: 'Courier New', monospace (typewriter aesthetic)
+- Headings: Bold, hand-drawn feel
+- Body: Readable monospace for educational content
 
-## 📝 Next Steps
+### Animation Curves
+- Rubber-hose bounce: `cubic-bezier(0.68, -0.55, 0.265, 1.55)`
+- Smooth ease: `cubic-bezier(0.25, 0.46, 0.45, 0.94)`
 
-1. Add real AI integration (Azure OpenAI / local LLM)
-2. Create frame-by-frame sprite animations for mascot
-3. Add quiz system with scoring
-4. Implement student progress tracking
-5. Add local language support (Bemba, Nyanja)
-6. Create achievement system with badges
+## 📦 Build Output
 
-## 📄 License
+Production build generates:
+- `dist/index.html` - Entry HTML file
+- `dist/assets/index.[hash].js` - Minified JavaScript bundle (~1.36 MB)
+- `dist/assets/index.[hash].css` - Minified CSS bundle (~2.51 KB)
 
-MIT License - Dongo Dongo Team
+## 🌐 Deployment
+
+The `dist/` folder contains all production-ready files. Deploy to any static hosting:
+
+- **Netlify**: Drag and drop `dist/` folder
+- **Vercel**: Connect repository and set build command to `npm run build`
+- **GitHub Pages**: Push `dist/` to gh-pages branch
+- **Azure Static Web Apps**: Configure build output to `dist`
+
+## 🎮 Interactive Features
+
+1. **Navigation Bar**: Wobbly hover effects with ink bleed shadows
+2. **Topic Cards**: Progress bars with watercolor fills
+3. **Chat Interface**: Hand-drawn chat bubbles with contextual mascot reactions
+4. **Mascot Overlay**: 4 animation states (idle, thinking, happy, explaining)
+
+## ♿ Accessibility
+
+- WCAG 2.1 AA contrast ratios maintained throughout
+- Keyboard navigation support
+- Screen reader friendly structure
+- Reduced motion option via CSS media query
+
+## 📝 License
+
+Educational project for Zambian Grade 12 students.
+
+---
+
+**Built with ❤️ for Dongo Dongo**
