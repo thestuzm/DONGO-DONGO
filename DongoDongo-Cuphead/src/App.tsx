@@ -1,53 +1,63 @@
-import React from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { useAppStore } from './store/appStore';
-import { LoadingScreen } from './components/LoadingScreen';
-import { ProfileSelection } from './components/ProfileSelection';
+import React, { useState } from 'react';
+import './styles/global.scss';
+import { LoadingScreen, ProfileSelection, ProfileTier } from './components/Onboarding';
 import { NavBar } from './components/NavBar';
 import { TopicDashboard } from './components/TopicDashboard';
 import { ChatInterface } from './components/ChatInterface';
-import { QuizSection } from './components/QuizSection';
+import { QuizInterface } from './components/QuizInterface';
+
+type Tab = 'topics' | 'chat' | 'quiz';
+type AppState = 'loading' | 'profile-select' | 'main';
 
 function App() {
-  const { isLoading, currentTier, activeTab, setActiveTab } = useAppStore();
+  const [appState, setAppState] = useState<AppState>('loading');
+  const [profileTier, setProfileTier] = useState<ProfileTier | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('topics');
 
-  // Handle tab switching
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'topics':
-        return <TopicDashboard />;
-      case 'chat':
-        return <ChatInterface />;
-      case 'quiz':
-        return <QuizSection />;
-      default:
-        return <TopicDashboard />;
-    }
+  const handleLoadingComplete = () => {
+    setAppState('profile-select');
   };
 
+  const handleProfileSelect = (tier: ProfileTier) => {
+    setProfileTier(tier);
+    setAppState('main');
+  };
+
+  const handleProfileChange = () => {
+    setAppState('profile-select');
+    setProfileTier(null);
+  };
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+  };
+
+  if (appState === 'loading') {
+    return <LoadingScreen onComplete={handleLoadingComplete} />;
+  }
+
+  if (appState === 'profile-select') {
+    return <ProfileSelection onSelectProfile={handleProfileSelect} />;
+  }
+
+  if (!profileTier) {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen bg-[#f5f1e8] paper-texture">
-      {/* Global Film Grain Overlay */}
-      <div className="film-grain pointer-events-none fixed inset-0 z-[9999]" />
+    <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <NavBar 
+        profileTier={profileTier}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        onProfileChange={handleProfileChange}
+      />
       
-      <AnimatePresence mode="wait">
-        {isLoading ? (
-          <LoadingScreen key="loading" />
-        ) : !currentTier ? (
-          <ProfileSelection key="profile" />
-        ) : (
-          <>
-            <NavBar 
-              key="navbar"
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-            />
-            <main key="content" className="relative z-10">
-              {renderContent()}
-            </main>
-          </>
-        )}
-      </AnimatePresence>
+      <main style={{ flex: 1, overflow: 'auto' }}>
+        {activeTab === 'topics' && <TopicDashboard profileTier={profileTier} />}
+        {activeTab === 'chat' && <ChatInterface profileTier={profileTier} />}
+        {activeTab === 'quiz' && <QuizInterface profileTier={profileTier} />}
+      </main>
     </div>
   );
 }
